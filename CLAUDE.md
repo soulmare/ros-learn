@@ -9,7 +9,7 @@ A step-by-step learning project building a **semi-autonomous 4WD rover** with tw
 1. **Arduino firmware** (low-level, real-time) — closed-loop motor control, gyro-based straight-line stabilization and precise turning, reactive obstacle/bumper safety.
 2. **ROS2 on Raspberry Pi 4** (high-level brain) — perception, waypoint path following, and behavioral decision-making.
 
-The Arduino handles all time-critical physical control; the Raspberry Pi runs ROS2 and sends high-level commands over serial. Hardware is fully documented in `HARDWARE.md` — consult it for all pin assignments, I2C addresses, sensor parameters, and library versions before writing any Arduino code.
+The Arduino handles all time-critical physical control; the Raspberry Pi runs ROS2 and sends high-level commands over serial. Hardware is fully documented in `HARDWARE.md` — consult it for all pin assignments, I2C addresses, sensor parameters, and library versions before writing any Arduino code. The full 10-phase learning and implementation roadmap is in `LEARNING-PLAN.md`.
 
 ## Build System
 
@@ -42,6 +42,12 @@ pio device monitor --baud 115200  # open serial monitor
 | PCF8574 (RobTillaart) | Bumper switch I/O expander |
 | Servo (built-in) | Servo PWM control |
 | Wire (built-in) | I2C communication |
+
+## Arduino Firmware Structure
+
+Each hardware subsystem gets its own `.cpp`/`.h` pair. `main.cpp` contains only `setup()` and `loop()` — no logic, no magic numbers. Pin assignments and all tunable constants (PID gains, thresholds, timing) live in dedicated config headers; no raw numbers anywhere else in the codebase.
+
+Prefer C-style modules over OOP: each subsystem exposes a set of functions and keeps its state in `static` variables. Use a plain `struct` to group related state when it improves readability. Avoid virtual methods and dynamic allocation (`new`/`delete`) — both are hazardous on a 2 KB RAM chip.
 
 ## Conventions
 
