@@ -15,7 +15,7 @@ The Arduino handles all time-critical physical control. The Pi sends high-level 
 
 | Document | Purpose |
 |----------|---------|
-| `HARDWARE.md` | Pin assignments, I2C addresses, sensor parameters, libraries |
+| `docs/hardware.md` | Pin assignments, I2C addresses, sensor parameters, libraries |
 | `LEARNING-PLAN.md` | 10-phase implementation roadmap with time estimates |
 | `SKILLS.md` | Developer skill levels (used to calibrate AI assistance) |
 

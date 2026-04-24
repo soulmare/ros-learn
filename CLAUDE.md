@@ -9,7 +9,7 @@ A step-by-step learning project building a **semi-autonomous 4WD rover** with tw
 1. **Arduino firmware** (low-level, real-time) — closed-loop motor control, gyro-based straight-line stabilization and precise turning, reactive obstacle/bumper safety.
 2. **ROS2 on Raspberry Pi 4** (high-level brain) — perception, waypoint path following, and behavioral decision-making.
 
-The Arduino handles all time-critical physical control; the Raspberry Pi runs ROS2 and sends high-level commands over serial. Hardware is fully documented in `HARDWARE.md` — consult it for all pin assignments, I2C addresses, sensor parameters, and library versions before writing any Arduino code. The full 10-phase learning and implementation roadmap is in `LEARNING-PLAN.md`.
+The Arduino handles all time-critical physical control; the Raspberry Pi runs ROS2 and sends high-level commands over serial. Hardware is fully documented in `docs/hardware.md` — consult it for all pin assignments, I2C addresses, sensor parameters, and library versions before writing any Arduino code. The full 10-phase learning and implementation roadmap is in `LEARNING-PLAN.md`.
 
 ## Build System
 
