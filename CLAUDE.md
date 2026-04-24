@@ -13,15 +13,14 @@ The Arduino handles all time-critical physical control; the Raspberry Pi runs RO
 
 ## Build System
 
-The firmware uses **PlatformIO**. Common commands (once a `platformio.ini` is present):
+The firmware uses **PlatformIO** via the VS Code extension. Open the `firmware/` folder in VS Code — the extension auto-detects `platformio.ini`. Use the status bar buttons:
 
-```bash
-pio run                  # compile firmware
-pio run --target upload  # compile and flash to Arduino Uno
-pio run --target clean   # clean build artifacts
-pio test                 # run unit tests (PlatformIO test framework)
-pio device monitor --baud 115200  # open serial monitor
-```
+| Action | Button |
+|--------|--------|
+| Compile | ✓ (Build) |
+| Compile & flash | → (Upload) |
+| Serial monitor | plug icon (Serial Monitor) |
+| Run tests | (PlatformIO: Test) |
 
 ## Hardware Summary
 
@@ -57,3 +56,4 @@ String literals must use the `F()` macro (`Serial.print(F("text"))`) to store th
 - Before starting a new phase, ask review questions on the previous phase's material to reinforce learning.
 - When introducing a topic known for gotchas (ISRs, I2C, PID windup, floating point on Arduino, etc.), proactively flag the most common beginner mistake before starting implementation.
 - Any architectural or design decision must be explicitly presented, explained, and confirmed by the user before proceeding. Never assume a decision is approved because the user moved to the next step.
+- When implementing firmware or ROS2 code: generate scaffolding (header files, function signatures, module structure, trivial wrappers), but leave key logic implementation to the user — it is a core part of the learning process. Clearly mark what needs to be implemented with a comment and a brief description of what the logic should do. Only write such code when you're directly asked to.

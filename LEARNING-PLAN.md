@@ -11,7 +11,7 @@ Step-by-step roadmap for building the semi-autonomous 4WD rover. Each phase ends
 **Estimated time:** 10–15 h
 
 ### Learn
-1. PlatformIO project setup (ini file, folder structure, uploading)
+1. PlatformIO project setup (ini file, folder structure, uploading via VS Code extension)
 2. H-bridge motor driver wiring and PWM control on Arduino
 3. Text-based serial protocol design: line framing, command parsing, ACK/NAK responses
 

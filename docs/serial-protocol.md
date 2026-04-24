@@ -8,7 +8,7 @@ Text-based, one message per line (`\n` terminated), 115200 baud.
 
 | Message | Arguments | Response |
 |---------|-----------|----------|
-| `SET_VEL v ω` | floats, m/s and °/s | none |
+| `SET_VEL v [ω]` | floats, m/s and °/s; ω defaults to 0 if omitted | none |
 | `STOP` | — | `OK STOP`; additionally `ERR TURN interrupted` if turn was in progress |
 | `SET_PARAM NAME VAL` | string, float | `OK SET_PARAM` or `ERR SET_PARAM msg` |
 | `TURN degrees` | float | `OK TURN` → heading updates via `VEL` → `DONE TURN` or `ERR TURN msg` |

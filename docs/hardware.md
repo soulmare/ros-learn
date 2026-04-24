@@ -14,6 +14,8 @@
 
 Four DC motors (two per side) wired in pairs and controlled via an H-bridge motor driver. Each pair shares one H-bridge channel, so the Arduino drives them as two logical motors: left and right.
 
+- **PWM deadband:** ~110 — minimum PWM value that overcomes static friction
+
 | Motor | Dir Pin 1 | Dir Pin 2 | PWM Enable |
 |-------|-----------|-----------|------------|
 | Left  | 9         | 7         | 6          |
