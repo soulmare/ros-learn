@@ -27,7 +27,7 @@ pio device monitor --baud 115200  # open serial monitor
 
 - **Arduino Uno** (ATmega328P) — real-time firmware, serial at 115200 baud
 - **Raspberry Pi 4** — ROS2 host, connects to Arduino over serial
-- **Drive:** 4WD, two DC motors via H-bridge (left/right pairs share channels), single-channel encoders (40 ticks/rev, 34 mm wheel radius)
+- **Drive:** 4WD, four DC motors wired in left/right pairs sharing H-bridge channels (Arduino sees two logical motors), single-channel encoders (40 ticks/rev, 34 mm wheel radius)
 - **Scanning:** HC-SR04 ultrasonic sensor on a servo (pin 8, forward = 81°, range 5°–165°)
 - **IMU:** MPU-6050 at I2C 0x68 (yaw integration, 21 Hz filter, 1 s startup calibration)
 - **Bumpers:** Two collision switches via PCF8574 I/O expander at I2C 0x24, active LOW
@@ -49,6 +49,11 @@ Each hardware subsystem gets its own `.cpp`/`.h` pair. `main.cpp` contains only 
 
 Prefer C-style modules over OOP: each subsystem exposes a set of functions and keeps its state in `static` variables. Use a plain `struct` to group related state when it improves readability. Avoid virtual methods and dynamic allocation (`new`/`delete`) — both are hazardous on a 2 KB RAM chip.
 
+String literals must use the `F()` macro (`Serial.print(F("text"))`) to store them in flash instead of RAM.
+
 ## Conventions
 
 - If you need to ask a list of questions - ask them one by one instead of giving a full list at once. Always mention total count of questions and current question number.
+- Before starting a new phase, ask review questions on the previous phase's material to reinforce learning.
+- When introducing a topic known for gotchas (ISRs, I2C, PID windup, floating point on Arduino, etc.), proactively flag the most common beginner mistake before starting implementation.
+- Any architectural or design decision must be explicitly presented, explained, and confirmed by the user before proceeding. Never assume a decision is approved because the user moved to the next step.
