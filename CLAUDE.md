@@ -52,6 +52,9 @@ String literals must use the `F()` macro (`Serial.print(F("text"))`) to store th
 
 ## Conventions
 
+- Never push to remote — that is always the user's decision.
+- When using any standard library function (C/C++ or Python) in explanations or code, explain what it does and show a minimal example — never assume the user knows it.
+- When the user asks about the meaning of a term or abbreviation, suggest adding it to GLOSSARY.md if it is not already there.
 - If you need to ask a list of questions - ask them one by one instead of giving a full list at once. Always mention total count of questions and current question number.
 - Before starting a new phase, ask review questions on the previous phase's material to reinforce learning.
 - When introducing a topic known for gotchas (ISRs, I2C, PID windup, floating point on Arduino, etc.), proactively flag the most common beginner mistake before starting implementation.
