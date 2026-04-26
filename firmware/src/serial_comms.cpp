@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "serial_comms.h"
 #include "motors.h"
+#include "encoders.h"
 #include "config/params.h"
 
 #define RX_BUF_SIZE 64
@@ -56,15 +57,13 @@ static void cmd_set_vel(char *args) {
     float v     = atof(token1);
     float omega = token2 ? atof(token2) : 0.0f;
 
-    // Convert v (m/s) and omega (deg/s) to left/right PWM
+    // Convert v (m/s) and omega (deg/s) to per-wheel target velocities (m/s)
     float omega_ms = omega * (TRACK_WIDTH_M / 2.0f) / 57.2958f;  // deg/s → m/s contribution
-    int16_t left  = constrain((int16_t)((v + omega_ms) * VEL_TO_PWM_SCALE), -PWM_MAX, PWM_MAX);
-    int16_t right = constrain((int16_t)((v - omega_ms) * VEL_TO_PWM_SCALE), -PWM_MAX, PWM_MAX);
-    motors_set(left, right);
+    encoders_set_velocity(v + omega_ms, v - omega_ms);
 }
 
 static void cmd_stop() {
-    motors_stop();
+    encoders_set_velocity(0.0f, 0.0f);
     Serial.println(F("OK STOP"));
 }
 

@@ -7,3 +7,7 @@
 #define PIN_RIGHT_DIR1  10
 #define PIN_RIGHT_DIR2  4
 #define PIN_RIGHT_PWM   5
+
+// Encoders (must be INT0/INT1 capable pins)
+#define PIN_ENC_LEFT    3
+#define PIN_ENC_RIGHT   2

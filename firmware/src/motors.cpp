@@ -14,8 +14,8 @@ void motors_init() {
 }
 
 static int16_t apply_deadband(int16_t speed) {
-    if (speed > 0 && speed < PWM_DEADBAND) return PWM_DEADBAND;
-    if (speed < 0 && speed > -PWM_DEADBAND) return -PWM_DEADBAND;
+    if (speed > 0 && speed < PWM_DEADBAND_KINETIC) return PWM_DEADBAND_KINETIC;
+    if (speed < 0 && speed > -PWM_DEADBAND_KINETIC) return -PWM_DEADBAND_KINETIC;
     return speed;
 }
 
