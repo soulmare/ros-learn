@@ -68,7 +68,7 @@ Command `SET_VEL 0.2 0.2` → robot drives at ~0.2 m/s on both sides, measured s
 5. Publish current heading over serial
 
 ### Milestone
-`DRIVE_STRAIGHT 1.0` → robot drives 1 m with minimal drift. `TURN 90` → robot rotates 90° ± ~3°.
+`SET_VEL 0.3` → robot drives straight with minimal drift (heading held by IMU PID). `SET_VEL 0 30` → robot rotates at 30°/s; Pi stops it at 90° ± ~3°.
 
 ---
 

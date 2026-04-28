@@ -9,9 +9,8 @@ Text-based, one message per line (`\n` terminated), 115200 baud.
 | Message | Arguments | Response |
 |---------|-----------|----------|
 | `SET_VEL v [ω]` | floats, m/s and °/s; ω defaults to 0 if omitted | none |
-| `STOP` | — | `OK STOP`; additionally `ERR TURN interrupted` if turn was in progress |
+| `STOP` | — | `OK STOP` |
 | `SET_PARAM NAME VAL` | string, float | `OK SET_PARAM` or `ERR SET_PARAM msg` |
-| `TURN degrees` | float | `OK TURN` → heading updates via `VEL` → `DONE TURN` or `ERR TURN msg` |
 | `SCAN` | — | full sweep, 5°–165° |
 | `SCAN from to` | float°, float° | partial sweep between two angles |
 | `SCAN angle` | float° | single point reading |
@@ -27,7 +26,7 @@ Streams continuously after the 1 s IMU calibration at boot.
 
 | Message | Arguments |
 |---------|-----------|
-| `VEL millis v heading` | ms; float m/s or `-`; float degrees |
+| `VEL millis v heading` | ms; float m/s; float degrees |
 | `SCAN millis angle dist` | ms; float degrees; float meters |
 
 `v` is `-` during a `TURN` — Pi should use heading only for odometry updates in that case.
@@ -49,9 +48,8 @@ No timestamp.
 
 ## Behavioral Rules
 
-- `TURN` and `SCAN` can run simultaneously — servo and wheels are independent.
+- `SCAN` can run simultaneously with drive commands — servo and wheels are independent.
 - `ESTOP` stops motors only; an active scan continues to `DONE SCAN`.
-- `STOP` sent during `TURN` produces `OK STOP` and `ERR TURN interrupted`.
 - `SCAN_STOP` aborts an active scan and produces `ERR SCAN interrupted`.
 - Single-point `SCAN angle` still sends `DONE SCAN` after its one reading.
 
@@ -60,7 +58,7 @@ No timestamp.
 ## Example Exchange
 
 ```
-Arduino: VEL 1001 - 0.0             ← streaming begins after calibration
+Arduino: VEL 1001 0.000 0.0         ← streaming begins after calibration
 Pi:      SET_VEL 0.2 0.0
 Arduino: VEL 1523 0.200 0.1
 Pi:      SCAN 60 120
@@ -69,11 +67,9 @@ Arduino: SCAN 1601 60.0 1.24
 Arduino: VEL 1610 0.200 0.2
 Arduino: SCAN 1635 90.0 0.88
 Arduino: DONE SCAN
-Pi:      TURN 90
-Arduino: OK TURN
-Arduino: VEL 2103 - 45.2
-Arduino: VEL 2154 - 89.8
-Arduino: DONE TURN
+Pi:      SET_VEL 0.0 30.0           ← turn at 30 deg/s; Pi watches heading and stops when done
+Arduino: VEL 2103 0.000 45.2
+Arduino: VEL 2154 0.000 89.8
 Pi:      STOP
 Arduino: OK STOP
 ```

@@ -37,10 +37,24 @@
 // Example: Ki=50 → I_MAX=5,  Ki=20 → I_MAX=12,  Ki=2 → I_MAX=127.5
 #define PID_I_MAX               0.73f  // integral clamp, prevents windup
 
+// IMU & heading control
+#define IMU_CALIBRATION_MS          1000    // duration of gyro bias calibration on startup (blocking)
+#define IMU_SAMPLE_INTERVAL_MS      47      // ~21 Hz gyro integration rate (1000 / 21 ≈ 47)
+
+#define HEADING_KP                  0.02f    // tune on robot: start low, increase until drift corrects quickly
+#define HEADING_KI                  0.0f
+#define HEADING_KD                  0.002f
+#define HEADING_I_MAX               10.0f
+// Max velocity correction the heading PID can apply to each wheel (m/s) — keeps turns from overpowering forward vel
+#define HEADING_CORRECTION_MAX      0.15f
+// Heading error below which a TURN is considered complete (degrees)
+#define TURN_THRESHOLD_DEG          2.0f
+
 // Telemetry
-#define VEL_REPORT          1       // send "VEL <left_mps> <right_mps>" each PID interval (0 = off, 1 = on)
+#define VEL_REPORT          0       // send "VEL <left_mps> <right_mps>" each PID interval (0 = off, 1 = on)
 
 // Debug output flags
 #define DEBUG_MOTORS        0       // print PWM values when motors change (0 = off, 1 = on)
-#define DEBUG_PID           1       // print PID state each update (0 = off, 1 = on)
+#define DEBUG_PID           0       // print PID state each update (0 = off, 1 = on)
 #define DEBUG_ENCODERS      0       // print wheel velocity and cumulative distance each PID interval
+#define DEBUG_HEADING       1       // print heading PID state each update (0 = off, 1 = on)

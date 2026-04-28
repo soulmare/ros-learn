@@ -2,6 +2,7 @@
 #include "encoders.h"
 #include "motors.h"
 #include "pid.h"
+#include "imu.h"
 #include "config/pins.h"
 #include "config/params.h"
 
@@ -65,6 +66,7 @@ void encoders_init() {
     attachInterrupt(digitalPinToInterrupt(PIN_ENC_RIGHT), isr_right, RISING);
 
     s_last_update_ms = millis();
+    Serial.println(F("OK INIT ENCODERS"));
 }
 
 void encoders_set_velocity(float left_mps, float right_mps) {
@@ -158,21 +160,20 @@ void encoders_update() {
     motors_set(left_pwm, right_pwm);
 
 #if VEL_REPORT
-    // Format: VEL millis v heading  (heading is 0.0 until IMU phase)
     Serial.print(F("VEL "));
     Serial.print(millis());
     Serial.print(F(" "));
     Serial.print(vel_avg, 3);
     Serial.print(F(" "));
-    Serial.println(0.0f, 1);
+    Serial.println(imu_get_heading(), 1);
 #endif
 
 #if DEBUG_PID
     // sp=target(m/s) vL/vR=per-wheel avg=shared PID input KpE/KiI/KdD=PID terms c=correction pwm=output
-    Serial.print(F("sp="));  Serial.print(s_pid_left.setpoint, 2);
+    Serial.print(F("SPD sp="));  Serial.print(s_pid_left.setpoint, 2);
     Serial.print(F(" vL=")); Serial.print(s_left_vel, 2);
     Serial.print(F(" vR=")); Serial.print(s_right_vel, 2);
-    Serial.print(F(" avg=")); Serial.print(vel_avg, 2);
+    Serial.print(F(" vAvg=")); Serial.print(vel_avg, 2);
     Serial.print(F(" KpE=")); Serial.print(s_pid_left.kp * (s_pid_left.setpoint - vel_avg), 1);
     Serial.print(F(" KiI=")); Serial.print(s_pid_left.ki * s_pid_left.integral, 1);
     Serial.print(F(" KdD=")); Serial.print(s_pid_left.last_d, 1);

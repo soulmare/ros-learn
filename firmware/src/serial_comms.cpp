@@ -2,6 +2,7 @@
 #include "serial_comms.h"
 #include "motors.h"
 #include "encoders.h"
+#include "heading.h"
 #include "config/params.h"
 
 #define RX_BUF_SIZE 64
@@ -38,8 +39,8 @@ static void handle_line(char *line) {
 
     if (!cmd) return;
 
-    if (strcmp(cmd, "SET_VEL") == 0)   cmd_set_vel(args);
-    else if (strcmp(cmd, "STOP") == 0) cmd_stop();
+    if (strcmp(cmd, "SET_VEL") == 0)        cmd_set_vel(args);
+    else if (strcmp(cmd, "STOP") == 0)      cmd_stop();
     else if (strcmp(cmd, "SET_PARAM") == 0) cmd_set_param(args);
     else {
         Serial.print(F("ERR UNKNOWN unknown command: "));
@@ -57,13 +58,13 @@ static void cmd_set_vel(char *args) {
     float v     = atof(token1);
     float omega = token2 ? atof(token2) : 0.0f;
 
-    // Convert v (m/s) and omega (deg/s) to per-wheel target velocities (m/s)
-    float omega_ms = omega * (TRACK_WIDTH_M / 2.0f) / 57.2958f;  // deg/s → m/s contribution
-    encoders_set_velocity(v + omega_ms, v - omega_ms);
+    // Always route through heading module — it holds heading for omega=0 (straight)
+    // and tracks a continuously advancing target for omega≠0 (curves), both with IMU feedback.
+    heading_set_velocity(v, omega);
 }
 
 static void cmd_stop() {
-    encoders_set_velocity(0.0f, 0.0f);
+    heading_set_velocity(0.0f, 0.0f);
     Serial.println(F("OK STOP"));
 }
 

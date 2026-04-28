@@ -11,6 +11,7 @@ void motors_init() {
     pinMode(PIN_RIGHT_DIR2, OUTPUT);
     pinMode(PIN_RIGHT_PWM,  OUTPUT);
     motors_stop();
+    Serial.println(F("OK INIT MOTORS"));
 }
 
 static int16_t apply_deadband(int16_t speed) {
