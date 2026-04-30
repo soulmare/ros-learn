@@ -50,6 +50,23 @@
 // Heading error below which a TURN is considered complete (degrees)
 #define TURN_THRESHOLD_DEG          2.0f
 
+// Servo & scanner
+#define SCANNER_SERVO_FORWARD_DEG   81.0f   // angle that points the sensor straight ahead
+#define SCANNER_SERVO_MIN_DEG       5.0f
+#define SCANNER_SERVO_MAX_DEG       165.0f
+#define SCANNER_STEP_DEG            5.0f    // degrees between sweep samples
+#define SCANNER_STEP_MS             100     // ms between steps (servo settle time + measurement)
+
+// Ultrasonic (HC-SR04)
+// Timeout formula: us = (max_dist_m * 2) / 0.000343
+//   0.5 m →  2915 us |  1.0 m →  5831 us
+//   1.5 m →  8746 us |  2.6 m → 15000 us (HC-SR04 datasheet max)
+// Readings beyond this range return -1.0f (no echo).
+#define ULTRASONIC_TIMEOUT_US   15000
+
+// Safety
+#define OBSTACLE_THRESHOLD_M    0.20f   // stop if forward obstacle closer than this (metres)
+
 // Telemetry
 #define VEL_REPORT          0       // send "VEL <left_mps> <right_mps>" each PID interval (0 = off, 1 = on)
 
@@ -57,4 +74,5 @@
 #define DEBUG_MOTORS        0       // print PWM values when motors change (0 = off, 1 = on)
 #define DEBUG_PID           0       // print PID state each update (0 = off, 1 = on)
 #define DEBUG_ENCODERS      0       // print wheel velocity and cumulative distance each PID interval
-#define DEBUG_HEADING       1       // print heading PID state each update (0 = off, 1 = on)
+#define DEBUG_HEADING       0       // print heading PID state each update (0 = off, 1 = on)
+#define DEBUG_SCANNER       1       // print every servo write (0 = off, 1 = on)

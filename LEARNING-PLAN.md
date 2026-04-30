@@ -44,7 +44,7 @@ Pi (or laptop) sends a drive command over serial → robot moves, stops, turns o
 4. Report actual wheel velocities back over serial
 
 ### Milestone
-Command `SET_VEL 0.2 0.2` → robot drives at ~0.2 m/s on both sides, measured speed converges to setpoint. Encoders report back to Pi.
+Command `SET_VEL 0.2 0` → robot drives straight at ~0.2 m/s, measured speed converges to setpoint. Encoders report back to Pi.
 
 ---
 
@@ -88,7 +88,7 @@ Command `SET_VEL 0.2 0.2` → robot drives at ~0.2 m/s on both sides, measured s
 1. HC-SR04 driver: blocking pulse measurement with 15 000 µs timeout
 2. Servo sweep: scan forward arc, report distance + angle over serial
 3. PCF8574 bumper reader: poll both switches each loop
-4. Safety layer: if obstacle < threshold OR bumper triggered → immediately stop motors, send `COLLISION` event over serial regardless of current command
+4. Safety layer: if obstacle < threshold OR bumper triggered → immediately stop motors, send `ESTOP OBSTACLE` or `ESTOP BUMPER` event over serial regardless of current command
 
 ### Milestone
 Robot drives toward a wall → stops autonomously before contact. Bumper hit → stops and reports. Servo scan data streams to Pi over serial.

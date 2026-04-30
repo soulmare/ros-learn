@@ -11,3 +11,10 @@
 // Encoders (must be INT0/INT1 capable pins)
 #define PIN_ENC_LEFT    3
 #define PIN_ENC_RIGHT   2
+
+// Ultrasonic (HC-SR04)
+#define PIN_ULTRASONIC_TRIG  11
+#define PIN_ULTRASONIC_ECHO  12
+
+// Servo
+#define PIN_SERVO            8

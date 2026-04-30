@@ -3,6 +3,7 @@
 #include "motors.h"
 #include "encoders.h"
 #include "heading.h"
+#include "scanner.h"
 #include "config/params.h"
 
 #define RX_BUF_SIZE 64
@@ -14,6 +15,8 @@ static void handle_line(char *line);
 static void cmd_set_vel(char *args);
 static void cmd_stop();
 static void cmd_set_param(char *args);
+static void cmd_scan(char *args);
+static void cmd_scan_stop();
 
 void serial_init() {
     Serial.begin(115200);
@@ -42,6 +45,8 @@ static void handle_line(char *line) {
     if (strcmp(cmd, "SET_VEL") == 0)        cmd_set_vel(args);
     else if (strcmp(cmd, "STOP") == 0)      cmd_stop();
     else if (strcmp(cmd, "SET_PARAM") == 0) cmd_set_param(args);
+    else if (strcmp(cmd, "SCAN") == 0)      cmd_scan(args);
+    else if (strcmp(cmd, "SCAN_STOP") == 0) cmd_scan_stop();
     else {
         Serial.print(F("ERR UNKNOWN unknown command: "));
         Serial.println(cmd);
@@ -76,4 +81,26 @@ static void cmd_set_param(char *args) {
     // Params will be added here as new phases introduce tunable values
     Serial.print(F("ERR SET_PARAM unknown param: "));
     Serial.println(name);
+}
+
+static void cmd_scan(char *args) {
+    // Three variants per serial-protocol.md:
+    //   SCAN            → full sweep across sensor range
+    //   SCAN angle      → single reading at one robot-frame angle (0 = forward)
+    //   SCAN from to    → partial sweep, robot-frame angles
+    if (!args) {
+        scanner_start_full();
+        return;
+    }
+    char *token1 = strtok(args, " ");
+    char *token2 = token1 ? strtok(NULL, " ") : NULL;
+    if (token2) {
+        scanner_start(atof(token1), atof(token2));
+    } else {
+        scanner_start_single(atof(token1));
+    }
+}
+
+static void cmd_scan_stop() {
+    scanner_stop();   // sends "ERR SCAN interrupted" internally
 }
