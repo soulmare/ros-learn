@@ -95,14 +95,16 @@ Robot drives toward a wall → stops autonomously before contact. Bumper hit →
 
 ---
 
-## Phase 5 — Raspberry Pi: ROS2 Installation & Core Concepts
+## Phase 5 — ROS2 Installation & Core Concepts
 
 **Goal:** Understand ROS2 well enough to write nodes before connecting anything to the robot.
+
+**Development approach:** Phases 5–7 run on the Ubuntu 24.04 desktop with the Arduino connected over USB. The Raspberry Pi 5 is introduced in Phase 8 once the ROS2 code is stable and autonomous features are ready to test on the robot untethered.
 
 **Estimated time:** 20–30 h
 
 ### Learn
-1. ROS2 Humble installation on RPi4 (Ubuntu 22.04 Server recommended)
+1. ROS2 Jazzy installation on Ubuntu 24.04 (desktop for Phases 5–7; RPi 5 for Phase 8+)
 2. Core concepts: nodes, topics, messages, services, parameters
 3. `colcon` build tool and workspace structure (`src/`, `install/`, overlay)
 4. Python ROS2 package structure: `package.xml`, `setup.py`, entry points
@@ -110,7 +112,7 @@ Robot drives toward a wall → stops autonomously before contact. Bumper hit →
 6. `ros2` CLI: `topic echo`, `node list`, `param get`, `bag record`
 
 ### Implement
-1. ROS2 workspace: `~/ros2_ws/src/`
+1. ROS2 workspace: `ros2_ws/` inside the project directory
 2. "Hello robot" node: publishes a `std_msgs/String` on a timer, no hardware
 3. Practice launching with `ros2 run` and a `.launch.py` file
 
@@ -215,7 +217,7 @@ Robot navigates a simple obstacle course (2–3 static obstacles) to reach a way
 **Estimated time:** 8–12 h
 
 ### Implement
-1. Systemd service on RPi4: auto-start ROS2 bridge on boot
+1. Deploy ROS2 workspace to RPi 5; systemd service: auto-start ROS2 bridge on boot
 2. Full bring-up launch file: Arduino bridge + waypoint follower + rviz2
 3. End-to-end test: power on → robot ready for waypoint commands within 30 s
 4. Tune all PID gains and safety thresholds

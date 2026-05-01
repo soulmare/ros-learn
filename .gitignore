@@ -1,2 +1,7 @@
 resume.sh
 firmware-demo/
+
+# ROS2 workspace build artifacts — only ros2_ws/src/ is tracked
+ros2_ws/build/
+ros2_ws/install/
+ros2_ws/log/

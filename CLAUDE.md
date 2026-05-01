@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 A step-by-step learning project building a **semi-autonomous 4WD rover** with two distinct software layers. Developer skill levels are documented in `SKILLS.md` — use it to calibrate explanation depth and code complexity.
 
 1. **Arduino firmware** (low-level, real-time) — closed-loop motor control, gyro-based straight-line stabilization and precise turning, reactive obstacle/bumper safety.
-2. **ROS2 on Raspberry Pi 4** (high-level brain) — perception, waypoint path following, and behavioral decision-making.
+2. **ROS2 on Raspberry Pi 5** (high-level brain) — perception, waypoint path following, and behavioral decision-making.
 
 The Arduino handles all time-critical physical control; the Raspberry Pi runs ROS2 and sends high-level commands over serial. Hardware is fully documented in `docs/hardware.md` — consult it for all pin assignments, I2C addresses, sensor parameters, and library versions before writing any Arduino code. The full 10-phase learning and implementation roadmap is in `LEARNING-PLAN.md`.
 
@@ -25,9 +25,9 @@ The firmware uses **PlatformIO** via the VS Code extension. Open the `firmware/`
 ## Hardware Summary
 
 - **Arduino Uno** (ATmega328P) — real-time firmware, serial at 115200 baud
-- **Raspberry Pi 4** — ROS2 host, connects to Arduino over serial
+- **Raspberry Pi 5** — ROS2 Jazzy host (Ubuntu 24.04), connects to Arduino over serial
 - **Drive:** 4WD, four DC motors wired in left/right pairs sharing H-bridge channels (Arduino sees two logical motors), single-channel encoders (40 ticks/rev, 34 mm wheel radius)
-- **Scanning:** HC-SR04 ultrasonic sensor on a servo (pin 8, forward = 81°, range 5°–165°)
+- **Scanning:** HC-SR04 ultrasonic sensor on a servo (pin 8, forward = 81° servo / 0° robot-frame, range 5°–165° servo)
 - **IMU:** MPU-6050 at I2C 0x68 (yaw integration, 21 Hz filter, 1 s startup calibration)
 - **Bumpers:** Two collision switches via PCF8574 I/O expander at I2C 0x24, active LOW
 - **I2C bus:** A4 (SDA) / A5 (SCL), shared by MPU-6050 and PCF8574
