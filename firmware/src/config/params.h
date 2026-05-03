@@ -68,11 +68,11 @@
 #define OBSTACLE_THRESHOLD_M    0.20f   // stop if forward obstacle closer than this (metres)
 
 // Telemetry
-#define VEL_REPORT          0       // send "VEL <left_mps> <right_mps>" each PID interval (0 = off, 1 = on)
+#define VEL_REPORT          1       // send "VEL <left_mps> <right_mps>" each PID interval (0 = off, 1 = on)
 
 // Debug output flags
 #define DEBUG_MOTORS        0       // print PWM values when motors change (0 = off, 1 = on)
 #define DEBUG_PID           0       // print PID state each update (0 = off, 1 = on)
 #define DEBUG_ENCODERS      0       // print wheel velocity and cumulative distance each PID interval
 #define DEBUG_HEADING       0       // print heading PID state each update (0 = off, 1 = on)
-#define DEBUG_SCANNER       1       // print every servo write (0 = off, 1 = on)
+#define DEBUG_SCANNER       0       // print every servo write (0 = off, 1 = on)

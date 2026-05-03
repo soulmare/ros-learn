@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>serial_bridge</name>
+  <version>0.0.0</version>
+  <description>ROS2 node that owns the serial connection to the rover firmware</description>
+  <maintainer email="o.bolokhovetskyi@mayabproject.com">alex</maintainer>
+  <license>TODO</license>
+
+  <exec_depend>rclpy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>nav_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>python3-serial</exec_depend>
+
+  <test_depend>pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

@@ -134,13 +134,21 @@ void encoders_update() {
     }
 #endif
 
+    // Average both wheels for telemetry and PID input
+    float vel_avg = (s_left_vel + s_right_vel) * 0.5f;
+
+#if VEL_REPORT
+    Serial.print(F("VEL "));
+    Serial.print(millis());
+    Serial.print(F(" "));
+    Serial.print(vel_avg, 3);
+    Serial.print(F(" "));
+    Serial.println(imu_get_heading(), 1);
+#endif
+
     // Skip PID when setpoint is zero — motors_stop() was already called in
     // encoders_set_velocity(); applying corrections here would fight that.
     if (s_pid_left.setpoint == 0.0f && s_pid_right.setpoint == 0.0f) return;
-
-    // Average both wheels so encoder noise/asymmetry doesn't drive the PIDs apart.
-    // IMU heading correction will handle yaw; this loop only controls forward speed.
-    float vel_avg = (s_left_vel + s_right_vel) * 0.5f;
 
     // Use static deadband as minimum base when wheels are stopped, kinetic when already moving
     float min_pwm = (fabsf(vel_avg) < VEL_KINETIC_THRESHOLD) ? PWM_DEADBAND_STATIC : PWM_DEADBAND_KINETIC;
@@ -158,15 +166,6 @@ void encoders_update() {
     int32_t right_pwm = constrain(base_pwm_right + pid_correction_right, -PWM_MAX, PWM_MAX);
 
     motors_set(left_pwm, right_pwm);
-
-#if VEL_REPORT
-    Serial.print(F("VEL "));
-    Serial.print(millis());
-    Serial.print(F(" "));
-    Serial.print(vel_avg, 3);
-    Serial.print(F(" "));
-    Serial.println(imu_get_heading(), 1);
-#endif
 
 #if DEBUG_PID
     // sp=target(m/s) vL/vR=per-wheel avg=shared PID input KpE/KiI/KdD=PID terms c=correction pwm=output
