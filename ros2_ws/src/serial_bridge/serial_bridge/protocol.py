@@ -45,3 +45,8 @@ def encode_set_vel(v: float, omega_deg: float) -> str:
 def encode_stop() -> str:
     """Return a STOP command string ready to write to serial (newline included)."""
     return 'STOP\n'
+
+
+def encode_set_param(name: str, val: float) -> str:
+    """Return a SET_PARAM command string ready to write to serial (newline included)."""
+    return f'SET_PARAM {name} {val}\n'

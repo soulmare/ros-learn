@@ -5,3 +5,6 @@ firmware-demo/
 ros2_ws/build/
 ros2_ws/install/
 ros2_ws/log/
+
+# ROS2 bag recordings
+rosbag2_*/

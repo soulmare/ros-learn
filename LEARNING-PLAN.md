@@ -161,10 +161,9 @@ Two Python nodes running: one publishes, one subscribes and logs. Launch file st
 4. ROS2 parameters for runtime tuning (PID gains, thresholds)
 
 ### Implement
-1. Bring-up launch file: starts `serial_bridge` + teleop
+1. Test moving with `teleop` (`teleop` runs in a separate terminal)
 2. `rviz2` config: display odometry path and range sensor
-3. Expose Arduino PID gains as ROS2 parameters; tune via `ros2 param set` without reflashing (requires adding a `SET_PARAM` command to the serial protocol defined in Phase 1)
-4. Add `encode_set_param(name, val)` to `serial_bridge/protocol.py`
+3. Expose Arduino PID gains as ROS2 parameters; tune via `ros2 param set` without reflashing
 
 ### Milestone
 Full manual control from keyboard over ROS2. Odom path visible in rviz2. Can record and replay a drive session with `ros2 bag`.

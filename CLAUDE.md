@@ -62,3 +62,4 @@ String literals must use the `F()` macro (`Serial.print(F("text"))`) to store th
 - When implementing firmware or ROS2 code: generate scaffolding (header files, function signatures, module structure, trivial wrappers), but leave key logic implementation to the user — it is a core part of the learning process. Clearly mark what needs to be implemented with a comment and a brief description of what the logic should do. Only write such code when you're directly asked to.
 - Before implementing any serial command or telemetry message, always read `docs/serial-protocol.md` first to check the expected format, arguments, and response.
 - When guiding the user through a series of functions to implement one by one, always state how many are left before asking them to implement the next one (e.g. "4 functions left — implement X next").
+- Always include the `-y` flag in `apt install` commands.
