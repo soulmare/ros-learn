@@ -6,6 +6,7 @@ import threading
 import serial
 import rclpy
 from rclpy.node import Node
+from rcl_interfaces.msg import SetParametersResult
 from geometry_msgs.msg import TransformStamped, Twist
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Range
@@ -14,6 +15,26 @@ from tf2_ros import TransformBroadcaster
 
 from . import protocol
 
+# Firmware tuning parameters — defaults mirror params.h (source of truth).
+# Duplication is unavoidable: firmware and ROS2 are separate compiled artifacts.
+_FIRMWARE_PARAMS: dict[str, float] = {
+    'VEL_KP':                 150.0,
+    'VEL_KI':                 350.0,
+    'VEL_KD':                   0.0,
+    'VEL_I_MAX':                0.73,
+    'VEL_TO_PWM_SCALE':       300.0,
+    'VEL_KINETIC_THRESHOLD':    0.05,
+    'PWM_DEADBAND_KINETIC':    55.0,
+    'PWM_DEADBAND_STATIC':     80.0,
+    'HDG_KP':                   0.02,
+    'HDG_KI':                   0.0,
+    'HDG_KD':                   0.002,
+    'HEADING_I_MAX':           10.0,
+    'HEADING_CORRECTION_MAX':   0.15,
+    'TURN_THRESHOLD_DEG':       2.0,
+    'OBSTACLE_M':               0.20,
+}
+
 
 class BridgeNode(Node):
     def __init__(self):
@@ -21,6 +42,9 @@ class BridgeNode(Node):
 
         self.declare_parameter('serial_port', '/dev/ttyUSB0')
         self.declare_parameter('serial_baud', 115200)
+
+        for name, default in _FIRMWARE_PARAMS.items():
+            self.declare_parameter(name, default)
 
         self._odom_pub   = self.create_publisher(Odometry, '/odom', 10)
         self._range_pub  = self.create_publisher(Range,    '/scan_range', 10)
@@ -37,6 +61,7 @@ class BridgeNode(Node):
             self.get_logger().fatal(f'Cannot open serial port {port}: {e}')
             sys.exit(1)
         self.get_logger().info(f'Opened serial port {port} at {baud} baud')
+        self.add_on_set_parameters_callback(self._param_callback)
 
         # Odometry state — updated only inside _handle_vel
         self._x           = 0.0
@@ -83,6 +108,10 @@ class BridgeNode(Node):
                 self._handle_estop(*result[1:])
             elif kind == 'ERR':
                 self.get_logger().warning(f'Firmware error: {result[1]} {result[2]}')
+            elif kind == 'OK':
+                self.get_logger().info(f'ACK: {result[1]}')
+            elif kind == 'UNKNOWN':
+                self.get_logger().warning(f'Unrecognised serial line: {result[1]}')
 
     # ------------------------------------------------------------------
     # Telemetry handlers
@@ -154,6 +183,12 @@ class BridgeNode(Node):
         self._odom_pub.publish(odom)
 
     # ------------------------------------------------------------------
+
+    def _param_callback(self, params):
+        for p in params:
+            if p.name in _FIRMWARE_PARAMS:
+                self._serial.write(protocol.encode_set_param(p.name, float(p.value)).encode())
+        return SetParametersResult(successful=True)
 
     def destroy_node(self):
         self._running = False

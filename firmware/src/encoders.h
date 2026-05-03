@@ -15,3 +15,6 @@ void encoders_set_velocity(float left_mps, float right_mps);
 // Returns the most recently estimated speed for each wheel (m/s).
 float encoders_get_left_velocity();
 float encoders_get_right_velocity();
+
+// Set a named runtime parameter. Returns true if name was recognised, false otherwise.
+bool encoders_set_param(const char *name, float val);

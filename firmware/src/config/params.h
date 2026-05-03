@@ -1,4 +1,6 @@
 #pragma once
+// Tunable runtime parameters (everything except geometry and timing) are also declared in
+// ros2_ws/src/serial_bridge/serial_bridge/bridge_node.py (_FIRMWARE_PARAMS). Keep in sync.
 
 // Geometry — measure on the physical robot
 #define TRACK_WIDTH_M       0.127f   // distance between left and right wheel centres (metres)
@@ -28,14 +30,14 @@
 
 // PID / velocity control
 #define PID_INTERVAL_MS         100      // velocity estimator and PID update period
-#define PID_KP                  150.0f
-#define PID_KI                  350.0f     // updated in pair with PID_I_MAX
-#define PID_KD                  0.0f
+#define VEL_KP                  150.0f
+#define VEL_KI                  350.0f     // updated in pair with VEL_I_MAX
+#define VEL_KD                  0.0f
 
-// PID_I_MAX clamps the integral accumulator. Max PWM contribution from integral = Ki * PID_I_MAX.
-// Rule of thumb: PID_I_MAX = PWM_MAX / Ki  (keeps max integral contribution ≤ 255 PWM)
+// VEL_I_MAX clamps the integral accumulator. Max PWM contribution from integral = Ki * VEL_I_MAX.
+// Rule of thumb: VEL_I_MAX = PWM_MAX / Ki  (keeps max integral contribution ≤ 255 PWM)
 // Example: Ki=50 → I_MAX=5,  Ki=20 → I_MAX=12,  Ki=2 → I_MAX=127.5
-#define PID_I_MAX               0.73f  // integral clamp, prevents windup
+#define VEL_I_MAX               0.73f  // integral clamp, prevents windup
 
 // IMU & heading control
 #define IMU_CALIBRATION_MS          1000    // duration of gyro bias calibration on startup (blocking)

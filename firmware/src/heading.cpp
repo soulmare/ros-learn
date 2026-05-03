@@ -5,6 +5,10 @@
 #include "pid.h"
 #include "config/params.h"
 
+// Runtime-tunable parameters
+static float s_correction_max    = HEADING_CORRECTION_MAX;
+static float s_turn_threshold_deg = TURN_THRESHOLD_DEG;
+
 static bool     s_active      = false;
 static float    s_forward_vel = 0.0f;   // m/s forward component
 static float    s_omega_dps   = 0.0f;   // deg/s angular rate (0 = straight)
@@ -40,11 +44,11 @@ void heading_update() {
     if (s_forward_vel == 0.0f && s_omega_dps != 0.0f) {
         const float kMargin = 0.01f;
         if (omega_ff > 0.0f)
-            correction = constrain(correction, -(omega_ff - kMargin), HEADING_CORRECTION_MAX);
+            correction = constrain(correction, -(omega_ff - kMargin), s_correction_max);
         else
-            correction = constrain(correction, -HEADING_CORRECTION_MAX, -omega_ff - kMargin);
+            correction = constrain(correction, -s_correction_max, -omega_ff - kMargin);
     } else {
-        correction = constrain(correction, -HEADING_CORRECTION_MAX, HEADING_CORRECTION_MAX);
+        correction = constrain(correction, -s_correction_max, s_correction_max);
     }
 
     encoders_set_velocity(s_forward_vel - omega_ff - correction,
@@ -61,6 +65,17 @@ void heading_update() {
     Serial.print(F(" KdD="));   Serial.print(s_pid.last_d, 2);
     Serial.print(F(" c="));     Serial.println(correction, 3);
 #endif
+}
+
+bool heading_set_param(const char *name, float val) {
+    if      (strcmp(name, "HDG_KP")              == 0) { s_pid.kp    = val; }
+    else if (strcmp(name, "HDG_KI")              == 0) { s_pid.ki    = val; }
+    else if (strcmp(name, "HDG_KD")              == 0) { s_pid.kd    = val; }
+    else if (strcmp(name, "HEADING_I_MAX")        == 0) { s_pid.i_max = val; }
+    else if (strcmp(name, "HEADING_CORRECTION_MAX") == 0) { s_correction_max     = val; }
+    else if (strcmp(name, "TURN_THRESHOLD_DEG")   == 0) { s_turn_threshold_deg  = val; }
+    else return false;
+    return true;
 }
 
 void heading_set_velocity(float mps, float omega_dps) {

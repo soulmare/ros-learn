@@ -22,6 +22,12 @@ static volatile uint32_t s_left_interval_us  = 0;  // µs between last two left 
 static volatile uint32_t s_right_tick_us     = 0;
 static volatile uint32_t s_right_interval_us = 0;
 
+// --- Runtime-tunable parameters (initialised from compile-time defaults) ---
+static float    s_vel_to_pwm_scale       = VEL_TO_PWM_SCALE;
+static float    s_vel_kinetic_threshold  = VEL_KINETIC_THRESHOLD;
+static int16_t  s_pwm_deadband_kinetic   = PWM_DEADBAND_KINETIC;
+static int16_t  s_pwm_deadband_static    = PWM_DEADBAND_STATIC;
+
 // --- Velocity estimator / PID cadence state ---
 static uint32_t s_last_update_ms = 0;
 
@@ -59,8 +65,8 @@ static void isr_right() {
 // --- Public API ---
 
 void encoders_init() {
-    pid_init(&s_pid_left,  PID_KP, PID_KI, PID_KD, PID_I_MAX);
-    pid_init(&s_pid_right, PID_KP, PID_KI, PID_KD, PID_I_MAX);
+    pid_init(&s_pid_left,  VEL_KP, VEL_KI, VEL_KD, VEL_I_MAX);
+    pid_init(&s_pid_right, VEL_KP, VEL_KI, VEL_KD, VEL_I_MAX);
 
     attachInterrupt(digitalPinToInterrupt(PIN_ENC_LEFT),  isr_left,  RISING);
     attachInterrupt(digitalPinToInterrupt(PIN_ENC_RIGHT), isr_right, RISING);
@@ -151,15 +157,15 @@ void encoders_update() {
     if (s_pid_left.setpoint == 0.0f && s_pid_right.setpoint == 0.0f) return;
 
     // Use static deadband as minimum base when wheels are stopped, kinetic when already moving
-    float min_pwm = (fabsf(vel_avg) < VEL_KINETIC_THRESHOLD) ? PWM_DEADBAND_STATIC : PWM_DEADBAND_KINETIC;
+    float min_pwm = (fabsf(vel_avg) < s_vel_kinetic_threshold) ? s_pwm_deadband_static : s_pwm_deadband_kinetic;
 
-    float base_pwm_left = s_pid_left.setpoint * VEL_TO_PWM_SCALE;
+    float base_pwm_left = s_pid_left.setpoint * s_vel_to_pwm_scale;
     if (base_pwm_left  >  0 && base_pwm_left  <  min_pwm)  base_pwm_left  =  min_pwm;
     if (base_pwm_left  <  0 && base_pwm_left  > -min_pwm)  base_pwm_left  = -min_pwm;
     float pid_correction_left = pid_update(&s_pid_left, vel_avg, dt_s);
     int32_t left_pwm = constrain(base_pwm_left + pid_correction_left, -PWM_MAX, PWM_MAX);
 
-    float base_pwm_right = s_pid_right.setpoint * VEL_TO_PWM_SCALE;
+    float base_pwm_right = s_pid_right.setpoint * s_vel_to_pwm_scale;
     if (base_pwm_right >  0 && base_pwm_right <  min_pwm)  base_pwm_right =  min_pwm;
     if (base_pwm_right <  0 && base_pwm_right > -min_pwm)  base_pwm_right = -min_pwm;
     float pid_correction_right = pid_update(&s_pid_right, vel_avg, dt_s);
@@ -184,3 +190,16 @@ void encoders_update() {
 
 float encoders_get_left_velocity()  { return s_left_vel; }
 float encoders_get_right_velocity() { return s_right_vel; }
+
+bool encoders_set_param(const char *name, float val) {
+    if      (strcmp(name, "VEL_KP")               == 0) { s_pid_left.kp  = val; s_pid_right.kp  = val; }
+    else if (strcmp(name, "VEL_KI")               == 0) { s_pid_left.ki  = val; s_pid_right.ki  = val; }
+    else if (strcmp(name, "VEL_KD")               == 0) { s_pid_left.kd  = val; s_pid_right.kd  = val; }
+    else if (strcmp(name, "VEL_I_MAX")            == 0) { s_pid_left.i_max = val; s_pid_right.i_max = val; }
+    else if (strcmp(name, "VEL_TO_PWM_SCALE")     == 0) { s_vel_to_pwm_scale      = val; }
+    else if (strcmp(name, "VEL_KINETIC_THRESHOLD") == 0) { s_vel_kinetic_threshold = val; }
+    else if (strcmp(name, "PWM_DEADBAND_KINETIC")  == 0) { s_pwm_deadband_kinetic  = (int16_t)val; }
+    else if (strcmp(name, "PWM_DEADBAND_STATIC")   == 0) { s_pwm_deadband_static   = (int16_t)val; }
+    else return false;
+    return true;
+}

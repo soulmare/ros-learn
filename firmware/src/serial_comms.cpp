@@ -3,6 +3,7 @@
 #include "motors.h"
 #include "encoders.h"
 #include "heading.h"
+#include "safety.h"
 #include "scanner.h"
 #include "config/params.h"
 
@@ -76,11 +77,17 @@ static void cmd_stop() {
 static void cmd_set_param(char *args) {
     if (!args) { Serial.println(F("ERR SET_PARAM missing arguments")); return; }
 
-    char *name = strtok(args, " ");
-    if (!name) { Serial.println(F("ERR SET_PARAM missing arguments")); return; }
-    // Params will be added here as new phases introduce tunable values
-    Serial.print(F("ERR SET_PARAM unknown param: "));
-    Serial.println(name);
+    char *name    = strtok(args, " ");
+    char *val_str = name ? strtok(NULL, " ") : NULL;
+    if (!name || !val_str) { Serial.println(F("ERR SET_PARAM missing arguments")); return; }
+
+    float val = atof(val_str);
+    if (encoders_set_param(name, val) || heading_set_param(name, val) || safety_set_param(name, val)) {
+        Serial.println(F("OK SET_PARAM"));
+    } else {
+        Serial.print(F("ERR SET_PARAM unknown param: "));
+        Serial.println(name);
+    }
 }
 
 static void cmd_scan(char *args) {

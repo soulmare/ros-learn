@@ -12,3 +12,6 @@ void heading_update();
 // omega_dps: desired turning rate in degrees/s (0 = straight, positive = counter-clockwise).
 // Pass mps=0.0f and omega_dps=0.0f to stop.
 void heading_set_velocity(float mps, float omega_dps);
+
+// Set a named runtime parameter. Returns true if name was recognised, false otherwise.
+bool heading_set_param(const char *name, float val);

@@ -26,8 +26,8 @@ def parse_line(line: str) -> tuple:
             return ('SCAN', int(parts[1]), float(parts[2]), float(parts[3]))
         if token == 'ESTOP' and len(parts) == 2:
             return ('ESTOP', parts[1])
-        if token == 'OK' and len(parts) == 2:
-            return ('OK', parts[1])
+        if token == 'OK' and len(parts) >= 2:
+            return ('OK', ' '.join(parts[1:]))
         if token == 'ERR' and len(parts) >= 3:
             return ('ERR', parts[1], ' '.join(parts[2:]))
         if token == 'DONE' and len(parts) == 2:

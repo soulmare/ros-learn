@@ -5,7 +5,8 @@
 #include "heading.h"
 #include "config/params.h"
 
-static bool s_triggered = false;
+static float s_obstacle_m  = OBSTACLE_THRESHOLD_M;
+static bool  s_triggered   = false;
 
 void safety_init() {
     Serial.println(F("OK INIT SAFETY"));
@@ -19,7 +20,7 @@ void safety_update() {
     // Forward distance: use the scanner's most recent forward reading.
     // -1.0f means no valid reading yet — treat as safe (don't false-trigger on startup).
     float fwd = scanner_forward_distance_m();
-    bool obstacle = (fwd >= 0.0f && fwd < OBSTACLE_THRESHOLD_M);
+    bool obstacle = (fwd >= 0.0f && fwd < s_obstacle_m);
 
     bool hazard = bumper_hit || obstacle;
 
@@ -39,3 +40,8 @@ void safety_update() {
 }
 
 bool safety_is_triggered() { return s_triggered; }
+
+bool safety_set_param(const char *name, float val) {
+    if (strcmp(name, "OBSTACLE_M") == 0) { s_obstacle_m = val; return true; }
+    return false;
+}
